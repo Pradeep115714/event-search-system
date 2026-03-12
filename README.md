@@ -61,5 +61,7 @@ backend
 pip install -r requirements.txt
 
 ## Results
-## Event Search Page
-![Event Search](results.jpeg)
+
+### Event Search Page
+
+[Event Search](results.jpeg)
