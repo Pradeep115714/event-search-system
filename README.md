@@ -59,3 +59,7 @@ backend
 
 ```bash
 pip install -r requirements.txt
+
+## Results
+## Event Search Page
+![Event Search](results.jpeg)
