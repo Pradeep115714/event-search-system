@@ -29,6 +29,4 @@ For demonstration and easier testing, the application currently reads from CSV f
 
 These CSV files contain sample event records used to demonstrate the search functionality.
 
-## How to Run
 
-1. Install dependencies
