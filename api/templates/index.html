@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Event Search</title>
+</head>
+
+<body>
+
+    <h1>Event Search</h1>
+
+    <input type="text" id="query" placeholder="Search keyword"><br><br>
+
+    <input type="time" id="start_time"><br><br>
+
+    <input type="time" id="end_time"><br><br>
+
+    <button onclick="searchEvents()">Search</button>
+
+    <h2>Results</h2>
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Time</th>
+                <th>File</th>
+            </tr>
+        </thead>
+        <tbody id="results-body"></tbody>
+    </table>
+
+    <p id="searchTime"></p>
+
+    <script>
+        async function searchEvents() {
+            const query = document.getElementById("query").value;
+            const start_time = document.getElementById("start_time").value;
+            const end_time = document.getElementById("end_time").value;
+
+            const response = await fetch(
+                `/api/search/?query=${query}&start_time=${start_time}&end_time=${end_time}`
+            );
+
+            const data = await response.json();
+
+            const table = document.getElementById("results-body");
+            table.innerHTML = "";
+
+            data.results.forEach(item => {
+                const row = `
+                    <tr>
+                        <td>${item.event}</td>
+                        <td>${item.time}</td>
+                        <td>${item.file}</td>
+                    </tr>
+                `;
+                table.innerHTML += row;
+            });
+
+            document.getElementById("searchTime").innerText =
+                "Search Time: " + data.search_time + " seconds";
+        }
+    </script>
+
+</body>
+
+</html>

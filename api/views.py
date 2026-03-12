@@ -11,40 +11,52 @@ def dashboard(request):
 
 
 def search_events(request):
-    query = request.GET.get("query", "").lower()
-    start_time = request.GET.get("start_time", "")
-    end_time = request.GET.get("end_time", "")
+    query = request.GET.get("query", "").lower().strip()
+    start_time = request.GET.get("start_time", "").strip()
+    end_time = request.GET.get("end_time", "").strip()
 
     start = time.time()
     results = []
 
     data_folder = os.path.join(settings.BASE_DIR, "data_files")
 
+    if not os.path.exists(data_folder):
+        return JsonResponse({
+            "results": [],
+            "search_time": 0,
+            "error": f"Folder not found: {data_folder}"
+        })
+
     for file_name in os.listdir(data_folder):
-        if file_name.endswith(".csv"):
-            file_path = os.path.join(data_folder, file_name)
+        if not file_name.endswith(".csv"):
+            continue
 
-            with open(file_path, newline='', encoding='utf-8') as csvfile:
-                reader = csv.DictReader(csvfile)
+        file_path = os.path.join(data_folder, file_name)
 
-                for row in reader:
-                    event_name = row["event"].lower()
-                    event_time = row["time"]
+        with open(file_path, newline="", encoding="utf-8", errors="ignore") as f:
+            reader = csv.DictReader(f)
 
-                    if query and query not in event_name:
-                        continue
+            for row in reader:
+                event_name = row.get("event", "").strip()
+                event_time = row.get("time", "").strip()
 
-                    if start_time and event_time < start_time:
-                        continue
+                if not event_name or not event_time:
+                    continue
 
-                    if end_time and event_time > end_time:
-                        continue
+                if query and query not in event_name.lower():
+                    continue
 
-                    results.append({
-                        "event": row["event"],
-                        "time": row["time"],
-                        "file": file_name
-                    })
+                if start_time and event_time < start_time:
+                    continue
+
+                if end_time and event_time > end_time:
+                    continue
+
+                results.append({
+                    "event": event_name,
+                    "time": event_time,
+                    "file": file_name
+                })
 
     end = time.time()
 
